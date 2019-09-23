@@ -14,3 +14,5 @@ The [VEX Coding Project](https://github.com/orgs/rockwayrobotics/projects/1) has
 worked on, and that have been completed.
 If you are working on a *To Do task*, click and drag it over to the *In Progress* tab. If you are no longer working on it, move it
 back over to the *To Do* tab. If you have fully completed a task, move it to the *Done* tab.
+
+If you think that the code is finished and bug free, then submit a pull request to merge it into the main branch.
