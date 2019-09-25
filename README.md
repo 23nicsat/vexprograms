@@ -6,8 +6,7 @@ experimenting.
 
 Copy the code that you want to use into the Vex Program, then once you are done, add it back into the file.
 
-If one of the coding files has any bugs, make sure to go to the *Issues* tab and open an issue. Make sure to
-go to the right, click on *Projects* and add it to the **VEX Coding** Project.
+If one of the coding files have any bugs, or any changes you want to suggest, make sure to go to the *Issues* tab and open an issue. Make sure to go to the right, click on *Projects* and add it to the **VEX Coding** Project.
 Once an issue has been resolved, click the *Close* button at the bottom.
 
 The [VEX Coding Project](https://github.com/rockwayrobotics/vexprograms/projects/1) has a list of things that need to be done, are being
