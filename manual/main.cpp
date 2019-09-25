@@ -1,11 +1,12 @@
-// Drive Forward
-// This program instructs your robot to move forward at half power for three
-// seconds. There is a two second pause at the beginning of the program.
+// Arcade Control 
+// This program instructs your robot to use remote control values to move the robot. 
 //
 // Robot Configuration: 
 // [Smart Port]    [Name]        [Type]           [Description]       [Reversed]
 // Motor Port 1    LeftMotor     V5 Smart Motor    Left side motor     false
 // Motor Port 10   RightMotor    V5 Smart Motor    Right side motor    true
+// Motor Port 8    ArmMotor      V5 Smart Motor    Arm motor           false
+// Motor Port 3    ClawMotor     V5 Smart Motor    Claw motor          false
 //
 #include "vex.h"
 
@@ -15,39 +16,69 @@ using namespace vex;
 vex::brain       Brain;
 
 // define your global instances of motors and other devices here
-vex::motor LeftMotor   = vex::motor( vex::PORT1 );
-vex::motor RightMotor  = vex::motor( vex::PORT10, true );
+vex::motor LeftMotor        = vex::motor( vex::PORT1 );
+vex::motor RightMotor       = vex::motor( vex::PORT10, true );
+vex::motor ArmMotor         = vex::motor( vex::PORT8 );
+vex::motor ClawMotor        = vex::motor( vex::PORT3 );
+vex::controller Controller1 = vex::controller();
 
 int main() {
-    // Wait 2 seconds or 2000 milliseconds before starting the program.
-    vex::task::sleep( 2000 );
-    // Print to the screen that the program has started.
-    Brain.Screen.print("User Program has Started.");
+    // Display that the program has started to the screen.
+    Brain.Screen.print("Arcade Control Program Started");
     
-    // Set the velocity of the left and right motors to 50% power. 
-    // This command will not make the motor spin.
-    LeftMotor.setVelocity( 50, vex::velocityUnits::pct );
-    RightMotor.setVelocity( 50, vex::velocityUnits::pct );
+    // Use these variables to set the speed of the arm and claw.
+    int armSpeedPCT  = 50;
+    int clawSpeedPCT = 50;
     
-    // Spin the right and left motor in the forward direction.
-    // The motors will spin at 50% power because of the previous commands.
-    LeftMotor.spin( vex::directionType::fwd );
-    RightMotor.spin( vex::directionType::fwd );
-    
-    // Wait 3 second or 3000 milliseconds.
-    vex::task::sleep( 3000 );
-    
-    // Stop both motors.
-    LeftMotor.stop();
-    RightMotor.stop();
-    
-    // Print to the brain's screen that the program has ended.
-    Brain.Screen.newLine();//Move the cursor to a new line on the screen.
-    Brain.Screen.print( "User Program has Ended." );
-
-    // Prevent main from exiting with an infinite loop.                        
+    // Create an infinite loop so that the program can pull remote control values every iteration.
+    // This loop causes the program to run forever.
     while(1) {
-      // Sleep the task for a short amount of time to prevent wasted resources.
-      vex::task::sleep(100);
+      // Drive Control
+      // Set the left and right motor to spin forward using the controller's Axis position as the velocity value.
+      // Since we are using a single joystick, we will need to calculate the final volicity for each motor.
+    
+      // (Axis3+Axis4)/2
+      LeftMotor.spin(vex::directionType::fwd, (Controller1.Axis3.position() + Controller1.Axis4.position())/2, vex::velocityUnits::pct); 
+      // (Axis3-Axis4)/2
+      RightMotor.spin(vex::directionType::fwd, (Controller1.Axis3.position() - Controller1.Axis4.position())/2, vex::velocityUnits::pct);
+    
+      // Arm Control
+      // If button up is pressed...
+      if(Controller1.ButtonUp.pressing()) { 
+        //...Spin the arm motor forward.
+        ArmMotor.spin(vex::directionType::fwd, armSpeedPCT, vex::velocityUnits::pct);
+      }
+      // else If the down button is pressed...
+      else 
+      if(Controller1.ButtonDown.pressing()) { 
+        //...Spin the arm motor backward.
+        ArmMotor.spin(vex::directionType::rev, armSpeedPCT, vex::velocityUnits::pct);
+      }
+      // else If neither up or down button is pressed...
+      else { 
+        //...Stop the arm motor.
+        ArmMotor.stop(vex::brakeType::brake);
+      }
+    
+      // Claw Control
+      // If the A button is pressed...
+      if(Controller1.ButtonA.pressing()) { 
+        //...Spin the claw motor forward.
+        ClawMotor.spin(vex::directionType::fwd, clawSpeedPCT, vex::velocityUnits::pct);
+      }
+      // else If the Y button is pressed...
+      else 
+      if(Controller1.ButtonY.pressing()) { 
+        //...Spin the claw motor backward.
+        ClawMotor.spin(vex::directionType::rev, clawSpeedPCT, vex::velocityUnits::pct);
+      }
+      // else If neither the A or Y button is pressed...
+      else {
+        //...Stop the claw motor.
+        ClawMotor.stop(vex::brakeType::brake);        
+      }
+
+    // Sleep the task for a short amount of time to prevent wasted resources.
+    vex::task::sleep(20);
     }
 }
