@@ -1,4 +1,4 @@
-# Vex Programs
+# Project BOB
 Collection of programs for the Vex Coding Team.
 
 Use the *testing* branch for any code that hasn't been fully tested and approved, or for
